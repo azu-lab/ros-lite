@@ -1,0 +1,30 @@
+- name: comp_talker1
+  cluster: 1
+  publish: [/chatter1]
+  publish_type: ["std_msgs::String"]
+  subscribe: [/chatter6]
+  subscribe_type: ["std_msgs::String"]
+- name: comp_talker2
+  cluster: 1
+  publish: [/chatter2, /chatter3]
+  publish_type: ["std_msgs::String", "std_msgs::String"]
+  subscribe: []
+  subscribe_type: []
+- name: comp_listener1
+  cluster : 2
+  publish: [/chatter4]
+  publish_type: ["std_msgs::String"]
+  subscribe: [/chatter1]
+  subscribe_type: ["std_msgs::String"]
+- name: comp_listener2
+  cluster : 2
+  publish: [/chatter5]
+  publish_type: ["std_msgs::String"]
+  subscribe: [/chatter1, /chatter2]
+  subscribe_type: ["std_msgs::String", "std_msgs::String"]
+- name: comp_ender
+  cluster : 1
+  publish: []
+  publish_type: []
+  subscribe: [/chatter4, /chatter5]
+  subscribe_type: ["std_msgs::String", "std_msgs::String"]

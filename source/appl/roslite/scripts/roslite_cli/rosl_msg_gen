@@ -1,0 +1,28 @@
+#!/bin/bash
+
+CURRENT_DIR=$(cd $(dirname $0); pwd)
+# echo $CURRENT_DIR
+
+echo_description () {
+    echo '--- Generating message header file (.h) from message files (.msg) ---'
+    echo '--- * Build all message files in ros_src/msg:  $ rosl_msg_gen or $ rosl_build -msg ---'
+    echo '--- * Build specific message file(s):  $ rosl_msg_gen [.msg path] [.msg path] ... ---'
+}
+
+if [ $# -eq 0 ]; then
+    echo_description
+    for file in `find $CURRENT_DIR/../../../ros_src/msg -name "*.msg"`; do
+        $CURRENT_DIR/../msg_gen.py $file
+    done
+else
+    if [ "$1" = "-h" -o "$1" = "--help" ]; then
+        echo 'usage: rosl_msg_gen [-h] [.msg]'
+        echo -e '\nrosl_msg_gen: ROS-lite message build command in ROS-lite Command Line Interface.\n'
+        echo -e 'optional arguments:\n  -h, --help\t\tshow this help message and exit'
+    else
+        echo_description
+        for file in "$@"; do
+            $CURRENT_DIR/../msg_gen.py $CURRENT_DIR/../../../ros_src/msg/$file
+        done
+    fi
+fi

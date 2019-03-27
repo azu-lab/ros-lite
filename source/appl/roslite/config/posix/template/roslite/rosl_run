@@ -1,0 +1,18 @@
+#!/bin/bash
+{% include 'common/note.cmake' %}
+
+
+CURRENT_DIR=$(cd $(dirname $0); pwd)
+# echo $CURRENT_DIR
+shopt -s expand_aliases
+source $CURRENT_DIR/../../roslite_cli.sh
+rosl_cd
+
+
+{% for cluster in cluster_list: %}
+{% if cluster in cluster_cpu_map: %}
+taskset -c {{ cluster_cpu_map[cluster]|join(",") }} ros_node-{{ cluster }} &
+{% else %}
+ros_node-{{ cluster }} &
+{% endif %}
+{% endfor %}

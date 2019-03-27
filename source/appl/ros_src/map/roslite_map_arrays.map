@@ -1,0 +1,12 @@
+- name: arrays_talker
+  cluster: 1
+  publish: [/chatter]
+  publish_type: ["test::Arrays"]
+  subscribe: []
+  subscribe_type: []
+- name: arrays_listener
+  cluster : 2
+  publish: []
+  publish_type: []
+  subscribe: [/chatter]
+  subscribe_type: ["test::Arrays"]

@@ -1,0 +1,40 @@
+cmake_minimum_required(VERSION 2.6)
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/../ros_bridge/generated/ros_bridge_generated.cmake)
+
+include_directories(
+        ${CMAKE_CURRENT_SOURCE_DIR}/config/posix/include
+)
+
+foreach(cluster_id RANGE 0 2)
+    add_library(
+            roslite-${cluster_id} STATIC
+            config/posix/src/roslite.cpp
+            src/generated/init.cpp
+            src/debug.cpp
+            src/info.cpp
+            src/init.cpp
+            src/node_handle.cpp
+            src/publisher.cpp
+            src/rate.cpp
+            src/subscriber.cpp
+            src/thread.cpp
+            src/time.cpp
+    )
+    target_compile_definitions(
+            roslite-${cluster_id}
+            PUBLIC ROSLITE_TARGET_CLUSTER_ID=${cluster_id}
+    )
+    if(${cluster_id} EQUAL 0)
+        target_include_directories(
+                roslite-${cluster_id}
+                PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..
+                PRIVATE ${ros_INCLUDE_DIRS}
+        )
+    else()
+        target_include_directories(
+                roslite-${cluster_id}
+                PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+        )
+    endif()
+endforeach()

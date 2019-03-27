@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+
+import os
+import sys
+import subprocess
+import argparse
+
+# main
+
+if __name__ == '__main__':
+    # Set help description
+    parser = argparse.ArgumentParser(description='rosl_build: ROS-lite build command in ROS-lite Command Line Interface.')
+
+    # Add options
+    parser.add_argument('-msg','--msg', action='store_true', default=False, help='build all message files (default: not build) if you would like to build specific file, pelease use rosl_msg_gen')
+    parser.add_argument('-map','--map', type=str, default='no map', metavar='map_file', help='build the argument of map file')
+    parser.add_argument('-app','--application', action='store_true', default=False, help='build ROS-application')
+    parser.add_argument('arg', nargs='?', type=str, default='no arg', metavar='clean', help='clean up built files')
+
+    args = parser.parse_args()
+    # print(args)
+
+    project_dir = os.path.relpath(os.path.dirname(os.path.abspath(__file__)) + '/../../../../../')
+    appl_dir = os.path.relpath(os.path.dirname(os.path.abspath(__file__)) + '/../../..')
+
+    if args.msg == True:
+        cmd = [os.path.join(appl_dir, '/roslite/scripts/roslite_cli/rosl_msg_gen')]
+        # print(cmd)
+        subprocess.call(cmd)
+
+    if args.map != 'no map':
+        cmd = [os.path.join(appl_dir, '/roslite/scripts/roslite_cli/rosl_map_gen'), args.map]
+        # print(cmd)
+        subprocess.call(cmd)
+
+    cmd = ['cmake', '.']
+    print(cmd)
+    subprocess.call(cmd)
+
+    if args.application == True:
+        if args.arg == 'clean':  # default: all clusters
+            cmd = ['make', '-C', project_dir, args.arg]
+            print(cmd)
+            subprocess.call(cmd)
+            sys.exit()
+        if args.arg == 'no arg':  # default: all clusters
+            cmd = ['make', '-C', project_dir]
+            print(cmd)
+            subprocess.call(cmd)
+            sys.exit()
+
+    if args.arg in ['clean']:
+        cmd = ['make', '-C', project_dir, args.arg]
+        print(cmd)
+        subprocess.call(cmd)
+        sys.exit()

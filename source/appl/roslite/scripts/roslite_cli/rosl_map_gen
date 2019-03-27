@@ -1,0 +1,16 @@
+#!/bin/bash
+
+CURRENT_DIR=$(cd $(dirname $0); pwd)
+# echo $CURRENT_DIR
+
+if [ $# -eq 0 ]; then
+    echo 'please check help: $ rosl_map_gen --help'
+else
+    if [ "$1" = "-h" -o "$1" = "--help" ]; then
+        echo 'usage: rosl_map_gen [-h] [.map]'
+        echo -e '\nrosl_map_gen: ROS-lite map build command in ROS-lite Command Line Interface.\n'
+        echo -e 'optional arguments:\n  -h, --help\t\tshow this help message and exit'
+    else
+        $CURRENT_DIR/../map_gen.py $CURRENT_DIR/../../../ros_src/map/$1
+    fi
+fi

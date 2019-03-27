@@ -1,0 +1,54 @@
+#!/bin/bash
+
+CURRENT_DIR=$(cd $(dirname $0); pwd)
+# echo $CURRENT_DIR
+
+ARGUMENT_ERROR_MESSAGE='please check help: $ rosl_create_map --help'
+
+if [ "$1" = "-h" -o "$1" = "--help" ]; then
+    echo 'usage: rosl_create_map [-h] file_list -o map_file [-c cluster_range] [--cpu cpu_range]'
+    echo -e '\nrosl_create_map: ROS-lite map creation command from cpp files\n'
+    echo -e 'optional arguments:\n  -h, --help\t\tshow this help message and exit'
+    exit 0
+fi
+
+if [ $# -lt 3 ]; then
+    echo $ARGUMENT_ERROR_MESSAGE
+elif [ "$2" != "-o" ]; then
+    echo $ARGUMENT_ERROR_MESSAGE
+elif [ $# -eq 5 -a "(" "$4" != "-c" -a "$4" != "--cpu" ")" ]; then
+    echo $ARGUMENT_ERROR_MESSAGE
+elif [ $# -eq 7 -a "(" "$6" != "-c" -a "$6" != "--cpu" ")" ]; then
+    echo $ARGUMENT_ERROR_MESSAGE
+else
+    node_path=$CURRENT_DIR/../../../ros_src/nodes/
+    map_path=$CURRENT_DIR/../../../ros_src/map/
+    pathes=""
+    comma=","
+    num_of_args=$#
+    flist=$1
+    out_file=$3
+    if [ $num_of_args -eq 5 ]; then
+        opt1_name=$4
+        opt1_range=$5
+    fi
+    if [ $num_of_args -eq 7 ]; then
+        opt2_name=$6
+        opt2_range=$7
+    fi
+    # split filelist with ','
+    IFS=','
+    set -- $flist
+    IFS=''
+    for x in "$@"
+    do
+        pathes=${pathes}${node_path}"$x"${comma}
+    done
+    if [ $num_of_args -eq 3 ]; then
+        $CURRENT_DIR/../create_map.py ${pathes%,} "-o" ${map_path}${out_file}
+    elif [ $num_of_args -eq 5 ]; then
+        $CURRENT_DIR/../create_map.py ${pathes%,} "-o" ${map_path}${out_file} $opt1_name $opt1_range
+    elif [ $num_of_args -eq 7 ]; then
+        $CURRENT_DIR/../create_map.py ${pathes%,} "-o" ${map_path}${out_file} $opt1_name $opt1_range $opt2_name $opt2_range
+    fi
+fi
