@@ -13,8 +13,8 @@
   subscribe: [/chatter]
   subscribe_type: ["std_msgs::String"]
 - name: listener2
-  cluster: 3
-  cpu: 2
+  cluster: 2
+  cpu: 1
   publish: []
   publish_type: []
   subscribe: [/chatter]

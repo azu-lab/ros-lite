@@ -53,7 +53,10 @@ extern roslite_er_t roslite_message_close(roslite_message_fd_t fd);
 extern roslite_er_t roslite_message_send(roslite_message_fd_t fd, const void *data, uint32_t size, uint32_t flags);
 extern roslite_er_t roslite_message_receive(roslite_message_fd_t fd, void *data, uint32_t *size, uint32_t flags);
 
-#define ROSLITE_BREAK_ERROR() \
+extern uint64_t roslite_gettime();
+#define ROSLITE_TICK_PER_SEC (1000000000llu)
+
+#define ROSLITE_BREAK_ERROR()         \
     roslite_thread_info_t thread_ref; \
     roslite_thread_get_info(roslite_thread_getid(), &thread_ref); \
     roslite_debug_printf("[ERROR]: hwclid=%d, lcid=%d, tid=%d\n", ROSLITE_TARGET_CLUSTER_ID, thread_ref.lcid, roslite_thread_getid() ); \

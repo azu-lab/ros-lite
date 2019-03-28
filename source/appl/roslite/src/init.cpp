@@ -40,7 +40,7 @@ void spin()
     while(ROSLITE_NAMESPACE::ok())
     {
         spinOnce();
-        roslite_thread_delay(10);
+        roslite_thread_delay(0);
     }
 }
 

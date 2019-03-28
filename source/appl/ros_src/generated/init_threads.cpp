@@ -1,5 +1,5 @@
 // [note] Auto-generated file
-// [note] 2019-03-20T08:43:51Z
+// [note] 2019-03-28T05:27:45Z
 // [note] based on source/appl/ros_src/map/roslite_map_two_listenres.map
 
 
@@ -14,7 +14,7 @@
   #include "ros/debug.h"
 #endif
 
-extern void ros_bridge_main();
+extern void cluster0_main();
 
 extern int talker_main(int argc, char **argv);
 extern int listener_main(int argc, char **argv);
@@ -57,19 +57,14 @@ create_init_threads(){
     ROSLITE_NAMESPACE::generated_init();
 
 #if ROSLITE_TARGET_CLUSTER_ID == 0
-    create_thread(1024 * 10, ros_bridge_main);
+    create_thread(1024 * 10, cluster0_main);
 #elif ROSLITE_TARGET_CLUSTER_ID == 1
     ROSLITE_NAMESPACE::createAndStartNodeThread(talker_main);
 #elif ROSLITE_TARGET_CLUSTER_ID == 2
     ROSLITE_NAMESPACE::createAndStartNodeThread(listener_main);
-#elif ROSLITE_TARGET_CLUSTER_ID == 3
     ROSLITE_NAMESPACE::createAndStartNodeThread(listener2_main);
 #endif 
 
-#if ROSLITE_TARGET_CLUSTER_ID != 17
-    // TODO
-    // roslite_rpc_barrier_all();  /* Synchronize all PE0 of all booted cluster */
     roslite_debug_printf("--------- cluster end ---------\n");
-#endif 
 } 
 

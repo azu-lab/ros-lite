@@ -5,6 +5,7 @@ import os
 import sys
 import subprocess
 import argparse
+import shutil
 
 # main
 
@@ -54,4 +55,14 @@ if __name__ == '__main__':
         cmd = ['make', '-C', project_dir, args.arg]
         print(cmd)
         subprocess.call(cmd)
+        os.remove('CMakeCache.txt')
+        os.remove('cmake_install.cmake')
+        os.remove('Makefile')
+        shutil.rmtree('CMakeFiles')
+        os.remove('source/appl/ros_src/cmake_install.cmake')
+        os.remove('source/appl/ros_src/Makefile')
+        shutil.rmtree('source/appl/ros_src/CMakeFiles')
+        os.remove('source/appl/roslite/cmake_install.cmake')
+        os.remove('source/appl/roslite/Makefile')
+        shutil.rmtree('source/appl/roslite/CMakeFiles')
         sys.exit()

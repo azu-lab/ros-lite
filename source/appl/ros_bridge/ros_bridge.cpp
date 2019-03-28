@@ -2,9 +2,9 @@
 #include <roslite/include/ros/ros.h>
 #include "ros_bridge.h"
 
-int rosl_bridge_generated_main(ros::NodeHandle ros_nh, roslite::NodeHandle roslite_nh);
+int ros_bridge_generated_main(ros::NodeHandle ros_nh, roslite::NodeHandle roslite_nh);
 
-void ros_bridge_main()
+void cluster0_main()
 {
     char *argv = (char *)"ros_bridge";
     int argc = 1;
@@ -15,7 +15,7 @@ void ros_bridge_main()
     ros::NodeHandle ros_nh;
     roslite::NodeHandle roslite_nh;
 
-    rosl_bridge_generated_main(ros_nh, roslite_nh);
+    ros_bridge_generated_main(ros_nh, roslite_nh);
 
     ros::shutdown();
 

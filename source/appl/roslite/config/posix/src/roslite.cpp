@@ -132,7 +132,14 @@ roslite_er_t roslite_thread_get_info(roslite_id_t tid, roslite_thread_info_t *th
 
 void roslite_thread_delay(uint32_t time_ms)
 {
-    usleep(time_ms * 1000);
+    if (time_ms == 0)
+    {
+        sched_yield();
+    }
+    else
+    {
+        usleep(time_ms * 1000);
+    }
 }
 
 static std::string _sanitized_filename_string(std::string& str) {
@@ -165,7 +172,7 @@ roslite_er_t roslite_name_register(const char *name, roslite_generic_id_t id, ro
 }
 
 roslite_generic_id_t roslite_name_lookup(const char *name, roslite_id_t nsid) {
-    roslite_debug_printf("roslite_name_lookup name:%s, nsid:%d\n", name, nsid);
+    //roslite_debug_printf("roslite_name_lookup name:%s, nsid:%d\n", name, nsid);
 
     roslite_generic_id_t id = -1;
 
@@ -223,7 +230,7 @@ roslite_message_fd_t roslite_message_connect(roslite_id_t tid) {
 roslite_message_fd_t roslite_message_accept() {
     roslite_thread *thread = _roslite_thread_map[roslite_thread_getid()];
 
-    roslite_debug_printf("roslite_message_accept fd:%d\n", thread->sock_fd);
+    //roslite_debug_printf("roslite_message_accept fd:%d\n", thread->sock_fd);
 
     return accept(thread->sock_fd, NULL, NULL);
 }
@@ -234,7 +241,7 @@ roslite_er_t roslite_message_close(roslite_message_fd_t fd) {
 }
 
 roslite_er_t roslite_message_send(roslite_message_fd_t fd, const void *data, uint32_t size, uint32_t flags) {
-    roslite_debug_printf("roslite_message_send fd:%d, data:%p, size:%d, flags:%d\n", fd, data, size, flags);
+    //roslite_debug_printf("roslite_message_send fd:%d, data:%p, size:%d, flags:%d\n", fd, data, size, flags);
 
     int rval = send(fd, data, size, 0);
     if (rval <= 0) {
@@ -245,7 +252,7 @@ roslite_er_t roslite_message_send(roslite_message_fd_t fd, const void *data, uin
 }
 
 roslite_er_t roslite_message_receive(roslite_message_fd_t fd, void *data, uint32_t *size, uint32_t flags) {
-    roslite_debug_printf("roslite_message_receive fd:%d, data:%p, size:%d, flags:%d\n", fd, data, *size, flags);
+    //roslite_debug_printf("roslite_message_receive fd:%d, data:%p, size:%d, flags:%d\n", fd, data, *size, flags);
 
     int received_size = 0;
     while (*size > received_size) {
@@ -259,6 +266,19 @@ roslite_er_t roslite_message_receive(roslite_message_fd_t fd, void *data, uint32
     }
 
     return ROSLITE_EOK;
+}
+
+uint64_t roslite_gettime()
+{
+    timespec t;
+    int ret = clock_gettime(CLOCK_REALTIME, &t);
+    if (ret != 0)
+    {
+        perror("clock_gettime error");
+        return 0;
+    }
+
+    return (((uint64_t)t.tv_sec) * 1000000000llu + ((uint64_t)t.tv_nsec));
 }
 
 static void _cleanup() {

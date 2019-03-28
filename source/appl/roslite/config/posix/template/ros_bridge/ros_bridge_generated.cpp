@@ -31,7 +31,7 @@ void ros_{{topic['topic_no_slash']}}_Callback(const ros::MessageEvent<{{topic['t
 
 {% endfor %}
 
-int rosl_bridge_generated_main(ros::NodeHandle ros_nh, roslite::NodeHandle roslite_nh)
+int ros_bridge_generated_main(ros::NodeHandle ros_nh, roslite::NodeHandle roslite_nh)
 {
     {% for topic in pub_topic_infos %}
     roslite_sub_{{topic['topic_no_slash']}} = roslite_nh.subscribe("{{topic['topic']}}", 10, roslite_{{topic['topic_no_slash']}}_Callback);

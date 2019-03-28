@@ -1,5 +1,5 @@
 // [note] Auto-generated file
-// [note] 2019-03-20T08:43:51Z
+// [note] 2019-03-28T05:27:45Z
 // [note] based on source/appl/ros_src/map/roslite_map_two_listenres.map
 
 
@@ -32,28 +32,20 @@ void generated_init(){
     TIMapMutex.lock();
     TIMap.insert(std::make_pair(std::string("/chatter"), TopicInfo()));
     TIMap.at("/chatter").SIs.push_back(std::shared_ptr<SubscriberInfo>(new SubscriberInfoImpl<bool>("_chatter_2_0", NULL, 2, 0)));
-    TIMap.at("/chatter").SIs.push_back(std::shared_ptr<SubscriberInfo>(new SubscriberInfoImpl<bool>("_chatter_3_0", NULL, 3, 0)));
+    TIMap.at("/chatter").SIs.push_back(std::shared_ptr<SubscriberInfo>(new SubscriberInfoImpl<bool>("_chatter_2_1", NULL, 2, 0)));
     TIMapMutex.unlock();
 #elif ROSLITE_TARGET_CLUSTER_ID == 1
     TIMapMutex.lock();
     TIMap.insert(std::make_pair(std::string("/chatter"), TopicInfo()));
     TIMap.at("/chatter").SIs.push_back(std::shared_ptr<SubscriberInfo>(new SubscriberInfoImpl<bool>("_chatter_2_0", NULL, 2, 0)));
-    TIMap.at("/chatter").SIs.push_back(std::shared_ptr<SubscriberInfo>(new SubscriberInfoImpl<bool>("_chatter_3_0", NULL, 3, 0)));
+    TIMap.at("/chatter").SIs.push_back(std::shared_ptr<SubscriberInfo>(new SubscriberInfoImpl<bool>("_chatter_2_1", NULL, 2, 0)));
     TIMap.at("/chatter").SIs.push_back(std::shared_ptr<SubscriberInfo>(new SubscriberInfoImpl<bool>("_chatter_0_0", NULL, 0, 0)));
     TIMapMutex.unlock();
 #elif ROSLITE_TARGET_CLUSTER_ID == 2
     TIMapMutex.lock();
     TIMap.insert(std::make_pair(std::string("/chatter"), TopicInfo()));
-    TIMap.at("/chatter").SIs.push_back(std::shared_ptr<SubscriberInfo>(new SubscriberInfoImpl<bool>("_chatter_3_0", NULL, 3, 0)));
     TIMap.at("/chatter").SIs.push_back(std::shared_ptr<SubscriberInfo>(new SubscriberInfoImpl<bool>("_chatter_0_0", NULL, 0, 0)));
     TIMapMutex.unlock();
-#elif ROSLITE_TARGET_CLUSTER_ID == 3
-    TIMapMutex.lock();
-    TIMap.insert(std::make_pair(std::string("/chatter"), TopicInfo()));
-    TIMap.at("/chatter").SIs.push_back(std::shared_ptr<SubscriberInfo>(new SubscriberInfoImpl<bool>("_chatter_2_0", NULL, 2, 0)));
-    TIMap.at("/chatter").SIs.push_back(std::shared_ptr<SubscriberInfo>(new SubscriberInfoImpl<bool>("_chatter_0_0", NULL, 0, 0)));
-    TIMapMutex.unlock();
-#elif ROSLITE_TARGET_CLUSTER_ID != 17
 #endif
 }
 

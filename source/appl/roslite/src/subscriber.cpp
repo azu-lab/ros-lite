@@ -24,8 +24,9 @@ void messageReceive(uint32_t start_code, uintptr_t exinf)
     delete message_receive_args;
 
     TIMapMutex.lock();
-    printThreadinfo((TIMap.at(topic).SIs[start_code])->recv_tname_);
+    std::string recv_tname = TIMap.at(topic).SIs[start_code]->recv_tname_;
     TIMapMutex.unlock();
+    printThreadinfo(recv_tname);
 
     SerializedMessage s_message;
 
@@ -59,10 +60,20 @@ void messageReceive(uint32_t start_code, uintptr_t exinf)
 
         // printSerializedMessage(s_message);
 
+        CallbackInfo callback_info;
+        callback_info.topic = topic;
+        callback_info.start_code = start_code;
+        callback_info.s_message = s_message;
+        callback_info.reg_time = roslite_gettime();
         TIMapMutex.lock();
-        (TIMap.at(topic).SIs[start_code])->entryCallBack(s_message);
+        std::queue<struct CallbackInfo> &callbackQueue = TIMap.at(topic).SIs[start_code]->CallbackQueue;
+        if (queue_size > 0 && callbackQueue.size() > queue_size)
+        {
+            free(callbackQueue.front().s_message.buf);
+            callbackQueue.pop();
+        }
+        callbackQueue.push(callback_info);
         TIMapMutex.unlock();
-        free(s_message.buf);
     }
 }
 

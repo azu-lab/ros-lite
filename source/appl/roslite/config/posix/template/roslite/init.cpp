@@ -43,7 +43,6 @@ void generated_init(){
     {% endfor %}
     TIMapMutex.unlock();
     {% if loop.last %}
-#elif ROSLITE_TARGET_CLUSTER_ID != 17
 #endif
     {% endif %}
 {% endfor %}

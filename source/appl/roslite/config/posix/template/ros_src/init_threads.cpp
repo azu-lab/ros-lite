@@ -14,7 +14,7 @@
   #include "ros/debug.h"
 #endif
 
-extern void ros_bridge_main();
+extern void cluster0_main();
 
 {% for node in node_list %}
 extern int {{node['name']}}_main(int argc, char **argv);
@@ -57,7 +57,7 @@ create_init_threads(){
     ROSLITE_NAMESPACE::generated_init();
 
 #if ROSLITE_TARGET_CLUSTER_ID == 0
-    create_thread(1024 * 10, ros_bridge_main);
+    create_thread(1024 * 10, cluster0_main);
 {% for cluster in cluster_list: %}
 #elif ROSLITE_TARGET_CLUSTER_ID == {{cluster}}
     {% for node in node_list if node['cluster'] == cluster %}
@@ -66,11 +66,7 @@ create_init_threads(){
 {% endfor %}
 #endif 
 
-#if ROSLITE_TARGET_CLUSTER_ID != 17
-    // TODO
-    // roslite_rpc_barrier_all();  /* Synchronize all PE0 of all booted cluster */
     roslite_debug_printf("--------- cluster end ---------\n");
-#endif 
 } 
 
 

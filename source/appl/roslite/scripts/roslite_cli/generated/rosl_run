@@ -1,6 +1,6 @@
 #!/bin/bash
 # [note] Auto-generated file
-# [note] 2019-03-20T08:43:51Z
+# [note] 2019-03-28T05:27:45Z
 # [note] based on source/appl/ros_src/map/roslite_map_two_listenres.map
 
 CURRENT_DIR=$(cd $(dirname $0); pwd)
@@ -12,4 +12,3 @@ rosl_cd
 
 taskset -c 0 ros_node-1 &
 taskset -c 1 ros_node-2 &
-taskset -c 2 ros_node-3 &

@@ -20,16 +20,20 @@ foreach(cluster_id RANGE 0 2)
             src/subscriber.cpp
             src/thread.cpp
             src/time.cpp
+            src/XmlRpcValue.cpp
+            src/XmlRpcUtil.cpp
     )
     target_compile_definitions(
             roslite-${cluster_id}
             PUBLIC ROSLITE_TARGET_CLUSTER_ID=${cluster_id}
     )
     if(${cluster_id} EQUAL 0)
+        find_package(xmlrpcpp REQUIRED)
         target_include_directories(
                 roslite-${cluster_id}
                 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..
                 PRIVATE ${ros_INCLUDE_DIRS}
+                PRIVATE ${xmlrpcpp_INCLUDE_DIRS}
         )
     else()
         target_include_directories(

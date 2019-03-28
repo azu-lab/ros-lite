@@ -1,5 +1,5 @@
 // [note] Auto-generated file
-// [note] 2019-03-20T08:43:51Z
+// [note] 2019-03-28T01:33:21Z
 // [note] based on source/appl/ros_src/map/roslite_map_two_listenres.map
 
 #include <ros/ros.h>
@@ -28,7 +28,7 @@ void ros__chatter_Callback(const ros::MessageEvent<std_msgs::String const>& ros_
 }
 
 
-int rosl_bridge_generated_main(ros::NodeHandle ros_nh, roslite::NodeHandle roslite_nh)
+int ros_bridge_generated_main(ros::NodeHandle ros_nh, roslite::NodeHandle roslite_nh)
 {
     roslite_sub__chatter = roslite_nh.subscribe("/chatter", 10, roslite__chatter_Callback);
     ros_pub__chatter = ros_nh.advertise<std_msgs::String>("/chatter", 10);

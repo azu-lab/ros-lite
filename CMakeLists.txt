@@ -33,6 +33,8 @@ foreach(cluster_id RANGE 1 2)
     )
 endforeach(cluster_id)
 
+find_package(roscpp REQUIRED)
+find_package(xmlrpcpp REQUIRED)
 include(${CMAKE_CURRENT_SOURCE_DIR}/source/appl/ros_bridge/generated/ros_bridge_generated.cmake)
 
 add_executable(
@@ -44,7 +46,8 @@ add_executable(
 target_include_directories(
         ros_bridge
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/source/appl
-        PRIVATE ${ros_INCLUDE_DIRS}
+        PRIVATE ${ros_bridge_INCLUDE_DIRS}
+        PRIVATE ${xmlrpcpp_INCLUDE_DIRS}
 )
 target_compile_definitions(
         ros_bridge
@@ -54,5 +57,31 @@ target_link_libraries(
         ros_bridge
         roslite-0
         pthread
-        ${ros_LIBRARIES}
+        ${ros_bridge_LIBRARIES}
+        ${roscpp_LIBRARIES}
+        ${xmlrpcpp_LIBRARIES}
+)
+
+add_executable(
+        ros_param_bridge
+        ${CMAKE_CURRENT_SOURCE_DIR}/source/appl/ros_param_bridge/ros_param_bridge.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/source/appl/ros_src/generated/init_threads.cpp
+)
+target_include_directories(
+        ros_param_bridge
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/source/appl
+        PRIVATE ${ros_bridge_INCLUDE_DIRS}
+        PRIVATE ${xmlrpcpp_INCLUDE_DIRS}
+)
+target_compile_definitions(
+        ros_param_bridge
+        PUBLIC ROSLITE_TARGET_CLUSTER_ID=0
+)
+target_link_libraries(
+        ros_param_bridge
+        roslite-0
+        pthread
+        ${ros_bridge_LIBRARIES}
+        ${roscpp_LIBRARIES}
+        ${xmlrpcpp_LIBRARIES}
 )
