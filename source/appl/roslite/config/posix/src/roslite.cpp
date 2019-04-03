@@ -61,6 +61,42 @@ roslite_er_t roslite_thread_attr_init(roslite_thread_attr_t *attr) {
     return 0;
 }
 
+static int set_thread_status(roslite_thread *thread, roslite_thread::status_t status)
+{
+    pthread_mutex_lock(&thread->status_mutex);
+
+    thread->status = status;
+
+    pthread_cond_broadcast(&thread->status_cond);
+    pthread_mutex_unlock(&thread->status_mutex);
+}
+
+static int set_thread_status(roslite_thread *thread, roslite_thread::status_t status, uint32_t start_code)
+{
+    pthread_mutex_lock(&thread->status_mutex);
+
+    thread->status = status;
+    thread->start_code = start_code;
+
+    pthread_cond_broadcast(&thread->status_cond);
+    pthread_mutex_unlock(&thread->status_mutex);
+}
+
+static int wait_thread_status(roslite_thread *thread, roslite_thread::status_t status_until)
+{
+    pthread_mutex_lock(&thread->status_mutex);
+
+    do {
+        struct timespec ts;
+        clock_gettime(CLOCK_REALTIME, &ts);
+        ts.tv_sec += 1;
+
+        pthread_cond_timedwait(&thread->status_cond, &thread->status_mutex, &ts);
+    } while (thread->status != status_until);
+
+    pthread_mutex_unlock(&thread->status_mutex);
+}
+
 static void * _roslite_pthread_main(void *arg) {
     roslite_thread *thread = (roslite_thread *)arg;
 
@@ -68,16 +104,9 @@ static void * _roslite_pthread_main(void *arg) {
     thread->tid = tid;
     thread->sock_fd = _create_message_sock(tid);
 
-    pthread_mutex_lock(&thread->status_mutex);
-    thread->status = roslite_thread::INITIALIZED;
-    pthread_cond_signal(&thread->status_cond);
-    pthread_mutex_unlock(&thread->status_mutex);
+    set_thread_status(thread, roslite_thread::INITIALIZED);
 
-    pthread_mutex_lock(&thread->status_mutex);
-    do {
-        pthread_cond_wait(&thread->status_cond, &thread->status_mutex);
-    } while (thread->status != roslite_thread::STARTED);
-    pthread_mutex_unlock(&thread->status_mutex);
+    wait_thread_status(thread, roslite_thread::STARTED);
 
     thread->entry(thread->start_code, thread->exinf);
 
@@ -94,11 +123,7 @@ roslite_erid_t roslite_thread_create(const roslite_thread_attr_t *attr, void (*e
 
     pthread_create(&thread->pthread, NULL, _roslite_pthread_main, thread);
 
-    pthread_mutex_lock(&thread->status_mutex);
-    do {
-        pthread_cond_wait(&thread->status_cond, &thread->status_mutex);
-    } while (thread->status != roslite_thread::INITIALIZED);
-    pthread_mutex_unlock(&thread->status_mutex);
+    wait_thread_status(thread, roslite_thread::INITIALIZED);
 
     _roslite_thread_map[thread->tid] = thread;
 
@@ -110,11 +135,7 @@ roslite_er_t roslite_thread_start(roslite_id_t tid, uint32_t start_code) {
 
     roslite_debug_printf("roslite_thread_start tid:%d, start_code:%d\n", tid, start_code);
 
-    pthread_mutex_lock(&thread->status_mutex);
-    thread->start_code = start_code;
-    thread->status = roslite_thread::STARTED;
-    pthread_cond_signal(&thread->status_cond);
-    pthread_mutex_unlock(&thread->status_mutex);
+    set_thread_status(thread, roslite_thread::STARTED, start_code);
 
     return ROSLITE_EOK;
 }

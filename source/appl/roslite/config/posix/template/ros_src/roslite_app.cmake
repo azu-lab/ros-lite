@@ -5,30 +5,24 @@
  #[ roslite_app.cmake ] - cmake rules for roslite application
 #****************************************************************************/
 
-{% for cluster in cluster_list: %}
-
-{% for node in node_list if node['cluster'] == cluster %}
-aux_source_directory({{ '${CMAKE_CURRENT_SOURCE_DIR}/nodes/' }}{{ node['name'] }} {{ node['name'] }}_SOURCE)
-add_library(
-        ros_node-{{ cluster }}-{{ node['name'] }} OBJECT
-        {{ '${' }}{{ node['name'] }}{{ '_SOURCE}' }}
-)
-target_compile_definitions(
-        ros_node-{{ cluster }}-{{ node['name'] }}
-        PUBLIC ROSLITE_TARGET_CLUSTER_ID={{ cluster }}
-        PUBLIC {{ node['name'] }}_MAIN=1
-)
-{% endfor %}
-
-add_library(
-        ros_node-{{ cluster }} STATIC
-{% for node in node_list if node['cluster'] == cluster %}
-        $<TARGET_OBJECTS:ros_node-{{ cluster }}-{{ node['name'] }}>
-{% endfor %}
-)
-
-target_compile_definitions(
-        ros_node-{{ cluster }}
-        PUBLIC ROSLITE_TARGET_CLUSTER_ID={{ cluster }}
-)
-{% endfor %}
+foreach(cluster_id {{ cluster_list | join(" ")}})
+    add_executable(
+            cluster-${cluster_id}
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/appl/ros_src/generated/init_threads.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/appl/roslite/src/generated/init.cpp
+    )
+    target_include_directories(
+            cluster-${cluster_id}
+            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/source/appl/roslite/include
+    )
+    target_compile_definitions(
+            cluster-${cluster_id}
+            PUBLIC ROSLITE_TARGET_CLUSTER_ID=${cluster_id}
+    )
+    target_link_libraries(
+            cluster-${cluster_id}
+            ros_node-${cluster_id}
+            roslite-${cluster_id}
+            pthread
+    )
+endforeach(cluster_id)

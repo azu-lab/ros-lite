@@ -150,10 +150,30 @@ def generate(yaml_file):
         )
     commons.print_generated_file(filepath)
 
+    filepath = 'ros_src/generated/roslite_node.cmake'
+    with open(os.path.join(output_dir, filepath), 'w') as f:
+        f.write(
+            env.get_template('ros_src/roslite_node.cmake').render(
+                node_list=yaml_data,
+                cluster_list=cluster_list
+            )
+        )
+    commons.print_generated_file(filepath)
+
     filepath = 'ros_src/generated/roslite_app.cmake'
     with open(os.path.join(output_dir, filepath), 'w') as f:
         f.write(
             env.get_template('ros_src/roslite_app.cmake').render(
+                node_list=yaml_data,
+                cluster_list=cluster_list
+            )
+        )
+    commons.print_generated_file(filepath)
+
+    filepath = 'roslite/generated/roslite.cmake'
+    with open(os.path.join(output_dir, filepath), 'w') as f:
+        f.write(
+            env.get_template('roslite/roslite.cmake').render(
                 node_list=yaml_data,
                 cluster_list=cluster_list
             )

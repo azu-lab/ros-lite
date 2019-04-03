@@ -10,5 +10,19 @@ source $CURRENT_DIR/../../roslite_cli.sh
 rosl_cd
 
 
-taskset -c 0 ros_node-1 &
-taskset -c 1 ros_node-2 &
+PIDS=
+
+taskset -c 1 ./ros_bridge &
+PIDS="${PIDS} $!"
+
+taskset -c 2 ./ros_param_bridge &
+PIDS="${PIDS} $!"
+
+taskset -c 0 ./cluster-1 &
+PIDS="${PIDS} $!"
+
+taskset -c 1 ./cluster-2 &
+PIDS="${PIDS} $!"
+
+
+wait $PIDS
