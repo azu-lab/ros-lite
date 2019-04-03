@@ -28,29 +28,20 @@ ROS-lite consists of following components:
    ```
 1. Run
 
-   Start five terminals and enter as follow:
+   Start roscore:
   
    ```
+   $ source /opt/ros/xinetic/setup.bash
    $ roscore
    ```
-   ```
-   $ cd [ros-lite directory]
-   $ ./cluster-1
-   ```
-   ```
-   $ cd [ros-lite directory]
-   $ ./cluster-2
-   ```
-   ```
-   $ cd [ros-lite directory]
-   $ ./ros_bridge
-   ```
-   ```
-   $ cd [ros-lite directory]
-   $ ./ros_param_bridge
-   ```
 
-   After starting these programs, following messages will be printed on cluster-1 terminal.
+   Start nodes
+
+   ```
+   $ rosl_run
+   ```
+   
+   After starting these programs, following messages will be printed from cluster-1 node .
    ```
    hello world
    hello world
@@ -59,7 +50,7 @@ ROS-lite consists of following components:
    ```
    These messages mean that "talker" node in cluster-1 publishes "hello world" to /chatter topic.
 
-   Meanwhile, following messages will be printed on cluster-2 terminal.
+   Meanwhile, following messages will be printed from cluster-2 node.
    ```
    I heard: [hello world]
    I heard: [hello world] in listener2
@@ -110,3 +101,9 @@ ROS-lite consists of following components:
    $ rosl_msg_gen
    ```
 1. Build and run
+   ```
+   $ rosl_build
+   $ rosl_run
+   ```
+
+
