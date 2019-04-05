@@ -32,4 +32,18 @@
   #define ROS_INFO(...) \
       roslite_debug_printf(__VA_ARGS__); \
       roslite_debug_printf("\n");
+  #define ROS_WARN(...) \
+      roslite_debug_printf(__VA_ARGS__); \
+      roslite_debug_printf("\n");
+  #define ROS_ERROR(...) \
+      roslite_debug_printf(__VA_ARGS__); \
+      roslite_debug_printf("\n");
+  #define ROS_INFO_STREAM(args)
+  #define ROS_ERROR_STREAM(args)
 #endif
+
+#include <stdint.h>
+#include <cstddef>
+#include <cfloat>
+#include <cmath>
+#include <algorithm>

@@ -33,4 +33,12 @@ sec = (uint32_t)sec64;
 nsec = (uint32_t)nsec64;
 }
 
+Time Time::now()
+{
+    uint64_t current_time = roslite_gettime();
+    uint32_t sec = (uint32_t)(current_time / ROSLITE_TICK_PER_SEC);
+    uint32_t nsec = (current_time - sec) / (ROSLITE_TICK_PER_SEC / 1000000000);
+    return Time(sec, nsec);
+}
+
 }  // namespace ROSLITE_NAMESPACE

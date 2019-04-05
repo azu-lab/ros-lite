@@ -32,10 +32,21 @@ std::string replace(std::string& stream, const std::string& target, const std::s
   return stream;
 }
 
-Subscriber NodeHandle::subscribe_(const std::string& topic, uint32_t queue_size, std::shared_ptr<SubscriberInfo> subscriber_info)
+Subscriber NodeHandle::subscribe_(const std::string& t, uint32_t queue_size, std::shared_ptr<SubscriberInfo> subscriber_info)
 {
   // roslite_debug_printf("[subscribe] topic: %s\n", topic.c_str());
   // roslite_debug_printf("[subscribe] count = [%d]\n", TIMap.count(topic));
+  std::string topic;
+  if ((t.length() > 0) && (t[0] == '/'))
+  {
+      topic = t;
+  }
+  else
+  {
+      topic = '/';
+      topic += t;
+  }
+
   TIMapMutex.lock();
   if (TIMap.count(topic) == 0){
     TIMapMutex.unlock();

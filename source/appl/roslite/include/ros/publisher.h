@@ -22,14 +22,16 @@ public:
     ~Publisher(){};
     std::string topic_name_;
 
-    void publish_internal(ROSLITE_NAMESPACE::SerializedMessage s_message);
+    void publish_internal(ROSLITE_NAMESPACE::SerializedMessage s_message) const;
 
     template <typename M>
-    void publish(const M& message)
+    void publish(const M& message) const
     {
         ROSLITE_NAMESPACE::SerializedMessage s_message = ROSLITE_NAMESPACE::serialization::serializeMessage(message);
 
         publish_internal(s_message);
+
+        free(s_message.buf);
     }
 
 };  // class Publisher

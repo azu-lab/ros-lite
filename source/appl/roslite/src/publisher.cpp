@@ -7,7 +7,7 @@
 namespace ROSLITE_NAMESPACE
 {
 
-void Publisher::publish_internal(ROSLITE_NAMESPACE::SerializedMessage s_message)
+void Publisher::publish_internal(ROSLITE_NAMESPACE::SerializedMessage s_message) const
 {
     roslite_id_t tid = 0;
     roslite_er_t ret;

@@ -26,10 +26,23 @@ class NodeHandle
 {
 public:
 
+NodeHandle(const std::string &ns = std::string()) {}
+    
 template <class MessageType>
-Publisher advertise(const std::string& topic, uint32_t queue_size)
+Publisher advertise(const std::string& t, uint32_t queue_size, bool latch=false)
 {
     // roslite_debug_printf("[advertise] count = [%d]\n", TIMap.count(topic));
+    std::string topic;
+    if ((t.length() > 0) && (t[0] == '/'))
+    {
+        topic = t;
+    }
+    else
+    {
+        topic = '/';
+        topic += t;
+    }
+
     TIMapMutex.lock();
     int count = TIMap.count(topic);
     TIMapMutex.unlock();

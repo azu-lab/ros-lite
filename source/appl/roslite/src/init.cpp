@@ -12,6 +12,7 @@
 
 #include <string>
 #include <queue>
+#include <algorithm>
 
 namespace ROSLITE_NAMESPACE
 {
@@ -44,63 +45,53 @@ void spin()
     }
 }
 
+static bool compareCallbackInfo(const CallbackInfo& left, const CallbackInfo& right)
+{
+    return (left.reg_time < right.reg_time);
+}
+
 void spinOnce()
 {
     /* get self thread ID */
     roslite_id_t tid = roslite_thread_getid();
-    std::vector <std::queue<struct CallbackInfo>*> queue_list;
+    //std::vector<std::queue<struct CallbackInfo>*> queue_list;
+    std::vector<struct CallbackInfo> processing_list;
 
     /* get all queue list */
     TIMapMutex.lock();
-    for(auto topic_info : TIMap)
+    for(std::map<std::string, TopicInfo>::iterator itrTIMap = TIMap.begin(); itrTIMap != TIMap.end(); ++itrTIMap)
     {
-        TopicInfo &ti = topic_info.second;
-        for(auto itr = ti.SIs.begin(); itr != ti.SIs.end(); ++itr)
+        TopicInfo &ti = itrTIMap->second;
+        for(std::vector<std::shared_ptr<SubscriberInfo> >::iterator itr = ti.SIs.begin(); itr != ti.SIs.end(); ++itr)
         {
             roslite_id_t subscriber_tid = (*itr)->getMainTid();
             if (tid == subscriber_tid)
             {
-                if (!((*itr)->CallbackQueue.empty()))
+                while(!(*itr)->CallbackQueue.empty())
                 {
-                    queue_list.push_back(&(*itr)->CallbackQueue);
+                    processing_list.push_back((*itr)->CallbackQueue.front());
+                    (*itr)->CallbackQueue.pop();
                 }
             }
         }
     }
     TIMapMutex.unlock();
 
-    /* queue is empty */
-    if (queue_list.empty())
+    std::sort(processing_list.begin(), processing_list.end(), compareCallbackInfo);
+
+    for(std::vector<struct CallbackInfo>::iterator itr = processing_list.begin(); itr != processing_list.end(); ++itr)
     {
-        return;
+        std::string topic = itr->topic;
+        uint32_t start_code = itr->start_code;
+        SerializedMessage s_message = itr->s_message;
+        /* execute callback */
+        TIMapMutex.lock();
+        std::shared_ptr<SubscriberInfo> si = (TIMap.at(topic).SIs[start_code]);
+        TIMapMutex.unlock();
+        si->entryCallBack(s_message);
+        /* free s_message */
+        free(s_message.buf);
     }
-    /* search oldest entry */
-    std::queue<struct CallbackInfo>* oldest_queue = NULL;
-    uint64_t oldest_time = UINT64_MAX;
-    for(auto itr = queue_list.begin(); itr != queue_list.end(); ++itr)
-    {
-        CallbackInfo &tmp_info = (*itr)->front();
-        time_t tmp_time = tmp_info.reg_time;
-
-        if (tmp_time <= oldest_time)
-        {
-            oldest_time = tmp_time;
-            oldest_queue = *itr;
-        }
-    }
-    std::string topic = oldest_queue->front().topic;
-    uint32_t start_code = oldest_queue->front().start_code;
-    SerializedMessage s_message = oldest_queue->front().s_message;
-    /* execute callback */
-    TIMapMutex.lock();
-    std::shared_ptr<SubscriberInfo> si = (TIMap.at(topic).SIs[start_code]);
-    TIMapMutex.unlock();
-    si->entryCallBack(s_message);
-    /* free s_message */
-    free(s_message.buf);
-
-
-    oldest_queue->pop();
 }
 
 bool ok()

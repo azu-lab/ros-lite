@@ -18,6 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('-map','--map', type=str, default='no map', metavar='map_file', help='build the argument of map file')
     parser.add_argument('-app','--application', action='store_true', default=False, help='build ROS-application')
     parser.add_argument('arg', nargs='?', type=str, default='no arg', metavar='clean', help='clean up built files')
+    parser.add_argument('-cmake-args', '--cmake-args', nargs='*', default=[], type=str, help='arguments of cmake lead by _. (e.g. -cmake-args _-DCMAKE_PREFIX_PATH=/cmake/prefix/path)')
 
     args = parser.parse_args()
     # print(args)
@@ -36,6 +37,11 @@ if __name__ == '__main__':
         subprocess.call(cmd)
 
     cmd = ['cmake', '.']
+    for cmake_arg in args.cmake_args:
+        if cmake_arg[0] != '_':
+            print('please insert \'_\' before each cmake arguments (e.g. -cmake-args _-DCMAKE_PREFIX_PATH=/cmake/prefix/path)')
+            sys.exit()
+        cmd.append(cmake_arg[1:])
     print(cmd)
     subprocess.call(cmd)
 

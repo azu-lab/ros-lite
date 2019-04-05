@@ -3,6 +3,7 @@
 #if ROSLITE_TARGET_CLUSTER_ID == 0
   #include "roslite/include/ros/common.h"
   #include "roslite/include/ros/duration.h"
+  #include "ros/time.h"
 #else
   #include "ros/common.h"
   #include "ros/duration.h"
@@ -112,6 +113,22 @@ public:
 
     // static Time fromBoost(const boost::posix_time::ptime& t);
     // static Time fromBoost(const boost::posix_time::time_duration& d);
+
+#if ROSLITE_TARGET_CLUSTER_ID == 0
+    static roslite::Time FromRosMsg(const typename ros::Time& ros_time) {
+        roslite::Time roslite_time;
+        roslite_time.sec = ros_time.sec;
+        roslite_time.nsec = ros_time.nsec;
+        return roslite_time;
+    }
+
+    ros::Time ToRosMsg() const {
+        ros::Time ros_time;
+        ros_time.sec = sec;
+        ros_time.nsec = nsec;
+        return ros_time;
+    }
+#endif
 };  
 
 

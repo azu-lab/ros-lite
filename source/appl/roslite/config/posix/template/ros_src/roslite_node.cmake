@@ -18,6 +18,10 @@ target_compile_definitions(
         PUBLIC ROSLITE_TARGET_CLUSTER_ID={{ cluster }}
         PUBLIC {{ node['name'] }}_MAIN=1
 )
+target_include_directories(
+        ros_node-{{ cluster }}-{{ node['name'] }}
+        PRIVATE {{ '${CMAKE_CURRENT_SOURCE_DIR}/nodes/' }}{{ node['name'] }}
+)
 {% endfor %}
 
 add_library(
